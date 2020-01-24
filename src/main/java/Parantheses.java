@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 /*You are given a List of random paranthesis characters (curly, square and round)
 and any characters in between.
 Verify if all parantheses are closed (and no more closing brackets than needed, meaning
-make sure you aren't opening any paranthesis with a closing bracket.*/
+make sure you aren't opening any paranthesis with a closing bracket).*/
 
 class Parantheses {
 
