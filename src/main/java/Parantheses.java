@@ -1,255 +1,162 @@
-package ex05__ScrabbleScore;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import java.util.HashMap;
-import java.util.Map;
+/*You are given a List of random paranthesis characters (curly, square and round)
+and any characters in between.
+Verify if all parantheses are closed (and no more closing brackets than needed, meaning
+make sure you aren't opening any paranthesis with a closing bracket.*/
 
-class Scrabble {
+class Parantheses {
 
-    private static final Map<Character, Integer> CHARACTER_VALUES = new HashMap<>();
+    private static final Map<Character, Integer> BRACKETS_VALUES = new HashMap<>();
 
     static {
-        putEachLetterOnMapWithItsValue("AEIOULNRST", 1);
-        putEachLetterOnMapWithItsValue("DG", 2);
-        putEachLetterOnMapWithItsValue("BCMP", 3);
-        putEachLetterOnMapWithItsValue("FHVWY", 4);
-        putEachLetterOnMapWithItsValue("K", 5);
-        putEachLetterOnMapWithItsValue("JX", 8);
-        putEachLetterOnMapWithItsValue("QZ", 10);
+        putEachBracketOnMapWithItsValue("{[(", -1);
+        putEachBracketOnMapWithItsValue("}])", 1);
     }
 
-    private int score;
+    private static int sumOfCurlyBrackets;
 
-    Scrabble(String word) {
-        this.score = word.toUpperCase().chars().map(letter -> CHARACTER_VALUES.get((char) letter)).sum();
+    private static int sumOfSquareBrackets;
+    private static int sumOfRoundBrackets;
+    private static boolean tryingToOpenParanthesisWithClosingBracket;
+
+    public Parantheses(List<Character> parantheses) {
+        calculateSumOfBracketValuesByParanthesisType(parantheses);
     }
 
-    int getScore() {
-        return this.score;
+    public String areAllParanthesesClosed() {
+        return tryingToOpenParanthesisWithClosingBracket ?
+                "trying to open paranthesis with closing bracket"
+                :
+                Boolean.toString(sumOfCurlyBrackets == 0 && sumOfSquareBrackets == 0 && sumOfRoundBrackets == 0);
     }
 
-    private static void putEachLetterOnMapWithItsValue(String letters, int value) {
-        letters.chars().forEach(letter -> CHARACTER_VALUES.put((char) letter, value));
+    private static void calculateSumOfBracketValuesByParanthesisType(List<Character> parantheses) {
+        for (Character bracket : parantheses) {
+            if (!tryingToOpenParanthesisWithClosingBracket) {
+                if (isCharacterOneOfTheseBrackets(bracket, '{', '}')) {
+                    sumOfCurlyBrackets += BRACKETS_VALUES.get(bracket);
+                    stopCheckingIfPositive(sumOfCurlyBrackets);
+                } else if (isCharacterOneOfTheseBrackets(bracket, '[', ']')) {
+                    sumOfSquareBrackets += BRACKETS_VALUES.get(bracket);
+                    stopCheckingIfPositive(sumOfSquareBrackets);
+                } else if (isCharacterOneOfTheseBrackets(bracket, '(', ')')) {
+                    sumOfRoundBrackets += BRACKETS_VALUES.get(bracket);
+                    stopCheckingIfPositive(sumOfRoundBrackets);
+                }
+            }
+        }
     }
 
+    private static boolean isCharacterOneOfTheseBrackets(Character character,
+                                                         Character openingBracket,
+                                                         Character closingBracket) {
+        return character.equals(openingBracket) || character.equals(closingBracket);
+    }
+
+    private static void stopCheckingIfPositive(int sumOfBracketPairs) {
+        if (sumOfBracketPairs > 0) {
+            tryingToOpenParanthesisWithClosingBracket = true;
+        }
+    }
+
+    private static void putEachBracketOnMapWithItsValue(String brackets, int value) {
+        brackets.chars().forEach(bracket -> BRACKETS_VALUES.put((char) bracket, value));
+    }
+
+    public static void main(String[] args) {
+        System.out.println(
+                new Parantheses(
+//                        "" // true
+//                        " " // true
+//                        "a" // true
+//                        "A" // true
+//                        "aBc" // true
+//                        "(" // false
+//                        "{[()]}" // true
+//                        "A{[()]}" // true
+//                        "{[(aBc)d]e}" // true
+//                        "[{(((())))]}" // true
+//                        "[{(" // false
+//                        "]" // trying to open paranthesis with closing bracket
+//                        "}])[]}()" // trying to open paranthesis with closing bracket
+//                        "()[]{}{}}" // trying to open paranthesis with closing bracket
+                        "()))]]}}" // trying to open paranthesis with closing bracket
+                                .chars()
+                                .mapToObj(c -> (char) c)
+                                .collect(Collectors.toList())
+                )
+                        .areAllParanthesesClosed()
+        );
+    }
 }
 
+//toDo: verify if parantheses ara closed in inverse order
+//toDo: tell if no bracket present
 
 //other solutions:
 
-
 //import java.util.HashMap;
-//import java.util.Map;
-//import java.util.stream.Collectors;
-//import java.util.stream.IntStream;
-//
-//class Scrabble {
-//
-//    private static final Map<Character, Integer> CHARACTER_VALUES = new HashMap<>();
-//
-//    static {
-//        putEachLetterOnMapWithItsValue("AEIOULNRST", 1);
-//        putEachLetterOnMapWithItsValue("DG", 2);
-//        putEachLetterOnMapWithItsValue("BCMP", 3);
-//        putEachLetterOnMapWithItsValue("FHVWY", 4);
-//        putEachLetterOnMapWithItsValue("K", 5);
-//        putEachLetterOnMapWithItsValue("JX", 8);
-//        putEachLetterOnMapWithItsValue("QZ", 10);
-//    }
-//
-//    private int score;
-//
-//    Scrabble(String word) {
-//        this.score = IntStream.range(0, word.length()).boxed()
-//                .collect(Collectors.summingInt(i -> CHARACTER_VALUES.get(word.toUpperCase().charAt(i))));
-//    }
-//
-//    int getScore() {
-//        return this.score;
-//    }
-//
-//    private static void putEachLetterOnMapWithItsValue(String letters, int value) {
-//        letters.chars().forEach(letter -> CHARACTER_VALUES.put((char) letter, value));
-//    }
-//
-//}
-
-
-//import java.util.HashMap;
+//import java.util.List;
 //import java.util.Map;
 //
-//class Scrabble {
+///*You are given a List of random paranthesis characters (curly, square and round)
+//and any characters in between.
+//Verify if all parantheses are closed (and no more closing brackets than needed, meaning
+//make sure you aren't opening any paranthesis with a closing bracket.*/
 //
-//    private static final Map<Character, Integer> CHARACTER_VALUES = new HashMap<>();
+//class Parantheses {
 //
-//    static {
-//        putEachLetterOnMapWithItsValue("AEIOULNRST", 1);
-//        putEachLetterOnMapWithItsValue("DG", 2);
-//        putEachLetterOnMapWithItsValue("BCMP", 3);
-//        putEachLetterOnMapWithItsValue("FHVWY", 4);
-//        putEachLetterOnMapWithItsValue("K", 5);
-//        putEachLetterOnMapWithItsValue("JX", 8);
-//        putEachLetterOnMapWithItsValue("QZ", 10);
+//    private static final Map<Character, Integer> BRACKETS_VALUES = new HashMap<>() {{
+//        put('{', -1);
+//        put('}', 1);
+//        put('[', -1);
+//        put(']', 1);
+//        put('(', -1);
+//        put(')', 1);
+//    }};
+//
+//    private static int sumOfCurlyBrackets;
+//    private static int sumOfSquareBrackets;
+//    private static int sumOfRoundBrackets;
+//
+//    public Parantheses(List<Character> parantheses) throws IllegalClosingBracketException {
+//        calculateSumOfBracketValuesByParanthesisType(parantheses);
 //    }
 //
-//    private int score;
+//    public boolean areAllParanthesesClosed() {
+//        return sumOfCurlyBrackets == 0 && sumOfSquareBrackets == 0 && sumOfRoundBrackets == 0;
+//    }
 //
-//    Scrabble(String word) {
-//        word = word.toUpperCase();
-//        int wordLength = word.length();
-//        for (int charIndex = 0; charIndex < wordLength; charIndex++) {
-//            this.score += CHARACTER_VALUES.get(word.charAt(charIndex));
+//    private static void calculateSumOfBracketValuesByParanthesisType(List<Character> parantheses)
+//            throws IllegalClosingBracketException {
+//        for (Character bracket : parantheses) {
+//            if (isThisTypeOfParanthesis(bracket, '{', '}')) {
+//                addBracketValueAndThrowExceptionIfSumIsPositive(sumOfCurlyBrackets, bracket);
+//            } else if (isThisTypeOfParanthesis(bracket, '[', ']')) {
+//                addBracketValueAndThrowExceptionIfSumIsPositive(sumOfSquareBrackets, bracket);
+//            } else if (isThisTypeOfParanthesis(bracket, '(', ')')) {
+//                addBracketValueAndThrowExceptionIfSumIsPositive(sumOfRoundBrackets, bracket);
+//            }
 //        }
 //    }
 //
-//    int getScore() {
-//        return this.score;
+//    private static boolean isThisTypeOfParanthesis(Character bracket,
+//                                                   Character thisOpeningBracket,
+//                                                   Character thisClosingBracket) {
+//        return bracket.equals(thisOpeningBracket) || bracket.equals(thisClosingBracket);
 //    }
 //
-//    private static void putEachLetterOnMapWithItsValue(String letters, int value) {
-//        letters.chars().forEach(letter -> CHARACTER_VALUES.put((char) letter, value));
+//    private static void addBracketValueAndThrowExceptionIfSumIsPositive(int sumOfTheseBrackets,
+//                                                                        Character bracket)
+//            throws IllegalClosingBracketException {
+//        sumOfTheseBrackets += BRACKETS_VALUES.get(bracket);
+//        throwIllegalClosingBracketExceptionIfPositive(sumOfTheseBrackets);
 //    }
 //
-//}
-
-
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//class Scrabble {
-//
-//    private static final Character[] CHARACTERS = {
-//            'A', 'E', 'I', 'O', 'U', 'L', 'N', 'R', 'S', 'T',
-//            'D', 'G',
-//            'B', 'C', 'M', 'P',
-//            'F', 'H', 'V', 'W', 'Y',
-//            'K',
-//            'J', 'X',
-//            'Q', 'Z'
-//    };
-//
-//    private static final Integer[] VALUES = {
-//            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//            2, 2,
-//            3, 3, 3, 3,
-//            4, 4, 4, 4, 4,
-//            5,
-//            8, 8,
-//            10, 10
-//    };
-//
-//    private static final Map<Character, Integer> CHARACTER_VALUES = new HashMap<>();
-//
-//    static {
-//        for (int i = 0; i < 26; i++) {
-//            CHARACTER_VALUES.put(CHARACTERS[i], VALUES[i]);
-//        }
+//    private static void throwIllegalClosingBracketExceptionIfPositive(int sumOfBracketPairs)
+//            throws IllegalClosingBracketException {
+//        if (sumOfBracketPairs > 0) throw new IllegalClosingBracketException();
 //    }
-//
-//    private int score;
-//
-//    Scrabble(String word) {
-//        word = word.toUpperCase();
-//        int wordLength = word.length();
-//        for (int charIndex = 0; charIndex < wordLength; charIndex++) {
-//            this.score += CHARACTER_VALUES.get(word.charAt(charIndex));
-//        }
-//    }
-//
-//    int getScore() {
-//        return this.score;
-//    }
-//
-//}
-
-
-//class Scrabble {
-//
-//    private int score;
-//
-//    private int valueOf(String I) {
-//        int value = 0;
-//        if (I.matches("[AEIOULNRST]")) value = 1;
-//        else if (I.matches("[DG]")) value = 2;
-//        else if (I.matches("[BCMP]")) value = 3;
-//        else if (I.matches("[FHVWY]")) value = 4;
-//        else if (I.matches("[K]")) value = 5;
-//        else if (I.matches("[JX]")) value = 8;
-//        else if (I.matches("[QZ]")) value = 10;
-//        return value;
-//    }
-//
-//    Scrabble(String word) {
-//        final String WORD = word.toUpperCase();
-//        final int LENGTH = WORD.length();
-//        for (int I = 0; I < LENGTH; I++) {
-//            this.score += valueOf(WORD.substring(I, I + 1));
-//        }
-//    }
-//
-//    int getScore() {
-//        return this.score;
-//    }
-//
-//}
-
-
-//class Scrabble {
-//
-//    private int score;
-//
-//    private int valueOf(String I) {
-//        int value = 0;
-//        if (I.matches("[AEIOULNRST]")) value = 1;
-//        if (I.matches("[DG]")) value = 2;
-//        if (I.matches("[BCMP]")) value = 3;
-//        if (I.matches("[FHVWY]")) value = 4;
-//        if (I.matches("[K]")) value = 5;
-//        if (I.matches("[JX]")) value = 8;
-//        if (I.matches("[QZ]")) value = 10;
-//        return value;
-//    }
-//
-//    Scrabble(String word) {
-//        final String WORD = word.toUpperCase();
-//        final int LENGTH = WORD.length();
-//        for (int I = 0; I < LENGTH; I++) {
-//            this.score += valueOf(WORD.substring(I, I + 1));
-//        }
-//    }
-//
-//    int getScore() {
-//        return this.score;
-//    }
-//
-//}
-
-
-//class Scrabble {
-//
-//    private int score;
-//
-//    private int valueOf(char character) {
-//        int value = 0;
-//        String c = Character.toString(character);
-//        if (c.matches("[AEIOULNRST]")) value = 1;
-//        if (c.matches("[DG]")) value = 2;
-//        if (c.matches("[BCMP]")) value = 3;
-//        if (c.matches("[FHVWY]")) value = 4;
-//        if (c.matches("[K]")) value = 5;
-//        if (c.matches("[JX]")) value = 8;
-//        if (c.matches("[QZ]")) value = 10;
-//        return value;
-//    }
-//
-//    Scrabble(String word) {
-//        char[] wordChars = word.toUpperCase().toCharArray();
-//        for (char c : wordChars) {
-//            this.score += valueOf(c);
-//        }
-//    }
-//
-//    int getScore() {
-//        return this.score;
-//    }
-//
 //}

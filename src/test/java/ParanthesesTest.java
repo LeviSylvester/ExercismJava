@@ -1,83 +1,107 @@
 import org.junit.Test;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.junit.Assert.assertEquals;
 
-public class ParanthesesScoreTest {
+public class ParanthesesTest {
+
+    private Parantheses parantheses;
+
+    private List<Character> asCharacterList(String paranthesesAndOtherStrings) {
+        return paranthesesAndOtherStrings
+                .chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.toList());
+    }
+
+    @Test
+    public void testAnEmptyInput() {
+        parantheses = new Parantheses(asCharacterList(""));
+        assertEquals("true", parantheses.areAllParanthesesClosed());
+    }
+
+    @Test
+    public void testASpace() {
+        parantheses = new Parantheses(asCharacterList(" "));
+        assertEquals("true", parantheses.areAllParanthesesClosed());
+    }
 
     @Test
     public void testALowerCaseLetter() {
-        Scrabble scrabble = new Scrabble("a");
-        assertEquals(1, scrabble.getScore());
+        parantheses = new Parantheses(asCharacterList("a"));
+        assertEquals("true", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
     public void testAUpperCaseLetter() {
-        Scrabble scrabble = new Scrabble("A");
-        assertEquals(1, scrabble.getScore());
+        parantheses = new Parantheses(asCharacterList("A"));
+        assertEquals("true", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
-    public void testAValuableLetter() {
-        Scrabble scrabble = new Scrabble("f");
-        assertEquals(4, scrabble.getScore());
+    public void testAShortString() {
+        parantheses = new Parantheses(asCharacterList("aBc"));
+        assertEquals("true", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
-    public void testAShortWord() {
-        Scrabble scrabble = new Scrabble("at");
-        assertEquals(2, scrabble.getScore());
+    public void testAValuableOpeningBracket() {
+        parantheses = new Parantheses(asCharacterList("("));
+        assertEquals("false", parantheses.areAllParanthesesClosed());
     }
-
-//    @Ignore("Remove to run test")
     @Test
-    public void testAShortValuableWord() {
-        Scrabble scrabble = new Scrabble("zoo");
-        assertEquals(12, scrabble.getScore());
+    public void testAllTypesOfClosedParantheses() {
+        parantheses = new Parantheses(asCharacterList("{[()]}"));
+        assertEquals("true", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
-    public void testAMediumWord() {
-        Scrabble scrabble = new Scrabble("street");
-        assertEquals(6, scrabble.getScore());
+    public void testARandomCharOutsideParanthesis() {
+        parantheses = new Parantheses(asCharacterList("A{[()]}"));
+        assertEquals("true", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
-    public void testAMediumValuableWord() {
-        Scrabble scrabble = new Scrabble("quirky");
-        assertEquals(22, scrabble.getScore());
+    public void testARandomCharInsideParanthesis() {
+        parantheses = new Parantheses(asCharacterList("{[(a)]}"));
+        assertEquals("false", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
-    public void testALongMixCaseWord() {
-        Scrabble scrabble = new Scrabble("OxyphenButazone");
-        assertEquals(41, scrabble.getScore());
+    public void testSomeMoreClosedParantheses() {
+        parantheses = new Parantheses(asCharacterList("[{(((())))]}"));
+        assertEquals("true", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
-    public void testAEnglishLikeWord() {
-        Scrabble scrabble = new Scrabble("pinata");
-        assertEquals(8, scrabble.getScore());
+    public void testNotClosedParantheses() {
+        parantheses = new Parantheses(asCharacterList("[{("));
+        assertEquals("false", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
-    public void testAnEmptyInput() {
-        Scrabble scrabble = new Scrabble("");
-        assertEquals(0, scrabble.getScore());
+    public void testOpeningOneParanthesisWithClosingBracket() {
+        parantheses = new Parantheses(asCharacterList("]"));
+        assertEquals("trying to open paranthesis with closing bracket", parantheses.areAllParanthesesClosed());
     }
 
-//    @Ignore("Remove to run test")
     @Test
-    public void testEntireAlphabetAvailable() {
-        Scrabble scrabble = new Scrabble("abcdefghijklmnopqrstuvwxyz");
-        assertEquals(87, scrabble.getScore());
+    public void testOpeningParanthesesWithClosingBracket() {
+        parantheses = new Parantheses(asCharacterList("}])[]}()"));
+        assertEquals("trying to open paranthesis with closing bracket", parantheses.areAllParanthesesClosed());
     }
 
+    @Test
+    public void testOneMoreClosingBracket() {
+        parantheses = new Parantheses(asCharacterList("()[]{}{}}"));
+        assertEquals("trying to open paranthesis with closing bracket", parantheses.areAllParanthesesClosed());
+    }
+
+    @Test
+    public void testMoreClosingBrackets() {
+        parantheses = new Parantheses(asCharacterList("()))]]}}"));
+        assertEquals("trying to open paranthesis with closing bracket", parantheses.areAllParanthesesClosed());
+    }
 }

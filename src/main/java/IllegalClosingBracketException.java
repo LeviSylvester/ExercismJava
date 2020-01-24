@@ -1,10 +1,10 @@
-public class IllegalParanthesisException extends Exception {
+public class IllegalClosingBracketException extends Exception {
 
-    public IllegalParanthesisException() {
+    public IllegalClosingBracketException() {
         super("Trying to open paranthesis with closing bracket!");
     }
 
-    public IllegalParanthesisException(String message) {
+    public IllegalClosingBracketException(String message) {
         super(message);
     }
 }
