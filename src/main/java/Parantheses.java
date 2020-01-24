@@ -16,7 +16,6 @@ class Parantheses {
     }
 
     private static int sumOfCurlyBrackets;
-
     private static int sumOfSquareBrackets;
     private static int sumOfRoundBrackets;
     private static boolean tryingToOpenParanthesisWithClosingBracket;
@@ -92,10 +91,10 @@ class Parantheses {
     }
 }
 
-//toDo: verify if parantheses ara closed in inverse order
-//toDo: tell if no bracket present
+//toDo: verify if parantheses are closed in inverse order
+//toDo: tell if there are no brackets present
 
-//other solutions:
+//other solution:
 
 //import java.util.HashMap;
 //import java.util.List;
@@ -104,7 +103,7 @@ class Parantheses {
 ///*You are given a List of random paranthesis characters (curly, square and round)
 //and any characters in between.
 //Verify if all parantheses are closed (and no more closing brackets than needed, meaning
-//make sure you aren't opening any paranthesis with a closing bracket.*/
+//make sure you aren't opening any paranthesis with a closing bracket).*/
 //
 //class Parantheses {
 //
